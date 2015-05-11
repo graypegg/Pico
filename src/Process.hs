@@ -36,6 +36,12 @@ ifNotEq rest c p (Tape b cur)
 
 runProgram :: Program -> Tape -> Int -> String
 runProgram _ _ 0 = "\n\n-------------------------------------\nERROR! Maxium number of cycles used!\n| Suggestion: Increase maximum cycles\n"
+runProgram (Program c p Running) (Tape b cur) (-1) = ( printIns (c!!p) (Tape b cur) ) ++
+												( runProgram 
+														(programIns (Program c p Running) (Tape b cur))
+														(tapeIns (c!!p) (Tape b cur))
+														(-1)
+												)
 runProgram (Program c p Running) (Tape b cur) i = ( printIns (c!!p) (Tape b cur) ) ++
 												( runProgram 
 														(programIns (Program c p Running) (Tape b cur))

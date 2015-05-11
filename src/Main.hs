@@ -1,5 +1,7 @@
 import Types
 import Process
+import FileIO
+import System.Environment
 
 prg = Program {
 	code = [
@@ -76,9 +78,11 @@ prg = Program {
 }
 
 tape = Tape {
-	bytes = [(Cell (x-x)) | x <- [0..]],
+	bytes = [(Cell 0) | x <- [0..]],
 	cursor = 0
 }
 
 main = do
-	putStrLn $ runProgram prg tape 3000
+	filePath <- getArgs
+	prg <- loadFile (filePath!!0)
+	putStrLn $ runProgram prg tape (-1)
