@@ -87,6 +87,8 @@ tapeIns ('+':arg) (Tape b cur) = Tape (replaceNth cur (newVal) b) cur
 								 where newVal = Cell $ (value (b!!cur)) + (read arg)
 tapeIns ('-':arg) (Tape b cur) = Tape (replaceNth cur (newVal) b) cur
 								 where newVal = Cell $ (value (b!!cur)) - (read arg)
+tapeIns ('=':arg) (Tape b cur) = Tape (replaceNth cur (newVal) b) cur
+								 where newVal = Cell $ read arg
 tapeIns ('@':arg) (Tape b cur)
 	| arg == ">" = Tape b (cur+1)
 	| arg == "<" = Tape b (cur-1)
