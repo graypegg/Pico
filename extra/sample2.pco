@@ -1,0 +1,12 @@
+# Sample Pico File
+
++1
+[<11]~LOOP
+@>
++50
+!ASCII
+-49
+@<
++1
+[END]~LOOP
+HALT

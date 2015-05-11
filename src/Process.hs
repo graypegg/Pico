@@ -28,10 +28,28 @@ jumpToEnd label (Program c p Running) = Program c ((fromJust (elemIndex ("[END]~
 compareBrackets :: String -> [String] -> Int -> Tape -> Program
 compareBrackets ('E':arg) c p t = jumpToTop (getLabel arg) (Program c p Running)
 compareBrackets ('/':arg) c p t = ifNotEq arg c p t
+compareBrackets ('=':arg) c p t = ifEq arg c p t
+compareBrackets ('>':arg) c p t = ifGT arg c p t
+compareBrackets ('<':arg) c p t = ifLT arg c p t
 
 ifNotEq :: String -> [String] -> Int -> Tape -> Program
 ifNotEq rest c p (Tape b cur)
 	| (number rest) /= (value (b!!cur)) = (Program c (p+1) Running)
+	| otherwise                         = jumpToEnd (getLabel rest) (Program c p Running)
+
+ifEq :: String -> [String] -> Int -> Tape -> Program
+ifEq rest c p (Tape b cur)
+	| (number rest) == (value (b!!cur)) = (Program c (p+1) Running)
+	| otherwise                         = jumpToEnd (getLabel rest) (Program c p Running)
+
+ifGT :: String -> [String] -> Int -> Tape -> Program
+ifGT rest c p (Tape b cur)
+	| (number rest) < (value (b!!cur)) = (Program c (p+1) Running)
+	| otherwise                         = jumpToEnd (getLabel rest) (Program c p Running)
+
+ifLT :: String -> [String] -> Int -> Tape -> Program
+ifLT rest c p (Tape b cur)
+	| (number rest) > (value (b!!cur)) = (Program c (p+1) Running)
 	| otherwise                         = jumpToEnd (getLabel rest) (Program c p Running)
 
 runProgram :: Program -> Tape -> Int -> String
