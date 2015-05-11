@@ -1,7 +1,7 @@
 # Sample Pico File
 
-+6
-[/=0]~LOOP
++9
+[/0]~LOOP
 @>
 +10
 @<
