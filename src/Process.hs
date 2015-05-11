@@ -1,8 +1,8 @@
 module Process (runProgram) where
 import Types
-import Data.Char
-import Data.List.Split
-import Data.List
+import Data.Char (chr)
+import Data.List.Split (splitOn)
+import Data.List (elemIndex, isSuffixOf)
 import Data.Maybe (fromJust)
 
 replaceNth :: Int -> a -> [a] -> [a]
