@@ -29,13 +29,13 @@ compareBrackets :: String -> [String] -> Int -> Tape -> Program
 compareBrackets ('E':arg) c p t = jumpToTop (getLabel arg) (Program c p Running)
 compareBrackets ('/':arg) c p t = ifNotEq arg c p t
 
-ifNotEq :: String -> [String] -> Int -> Tape  -> Program
+ifNotEq :: String -> [String] -> Int -> Tape -> Program
 ifNotEq rest c p (Tape b cur)
 	| (number rest) /= (value (b!!cur)) = (Program c (p+1) Running)
 	| otherwise                         = jumpToEnd (getLabel rest) (Program c p Running)
 
 runProgram :: Program -> Tape -> Int -> String
-runProgram _ _ 0 = ""
+runProgram _ _ 0 = "\n\n-------------------------------------\nERROR! Maxium number of cycles used!\n| Suggestion: Increase maximum cycles\n"
 runProgram (Program c p Running) (Tape b cur) i = ( printIns (c!!p) (Tape b cur) ) ++
 												( runProgram 
 														(programIns (Program c p Running) (Tape b cur))
