@@ -1,0 +1,4 @@
+Pico
+dist
+*.o
+*.hi

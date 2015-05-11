@@ -1,0 +1,14 @@
+# Sample Pico File
+
++6
+[/=0]~LOOP
+@>
++10
+@<
+-1
+[END]~LOOP
+@>
+!INT
+" equals "
+!ASCII
+HALT
