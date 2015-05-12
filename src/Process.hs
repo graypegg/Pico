@@ -1,9 +1,10 @@
 module Process (runProgram) where
 import Types
-import Data.Char (chr)
+import Data.Char (chr, intToDigit)
 import Data.List.Split (splitOn)
 import Data.List (elemIndex, isSuffixOf)
 import Data.Maybe (fromJust)
+import Numeric (showHex, showIntAtBase)
 
 replaceNth :: Int -> a -> [a] -> [a]
 replaceNth n newVal (x:xs)
@@ -70,11 +71,14 @@ runProgram (Program _ _ Halted) t _ = ""
 
 printIns :: String -> Tape -> String
 printIns ('!':arg) (Tape b cur)
-	| arg == "INT"   = show (value (b!!cur))
-	| arg == "ASCII" = [ (chr (value (b!!cur))) ]
-	| otherwise      = "!"
-printIns ('"':arg) _ = init arg
-printIns _ _         = ""
+	| arg == "INT"     = show (value (b!!cur))
+	| arg == "HEX"     = showHex (value (b!!cur)) ""
+	| arg == "BIN"     = showIntAtBase 2 intToDigit (value (b!!cur)) ""
+	| arg == "ASCII"   = [ (chr (value (b!!cur))) ]
+	| arg == "NEWLINE" = "\n"
+	| otherwise        = ""
+printIns ('"':arg) _   = init arg
+printIns _ _           = ""
 
 programIns :: Program -> Tape -> Program
 programIns (Program c p Running) t
