@@ -1,6 +1,6 @@
 module Helpers where
 import Types
-import LibPico.Math
+import LibPico
 import Data.List.Split (splitOn)
 import Data.List (elemIndex, isSuffixOf)
 import Data.Maybe (fromJust)
@@ -72,7 +72,8 @@ dropAt n xs = let (ys,zs) = splitAt n xs in
 			  ys ++ (tail zs)
 
 readFunction :: String -> [String] -> Int -> Program
-readFunction "libpico.math" c p = Program (libPicoMath++c') 0 Running []
-								  where c' = dropAt p c
-readFunction _ c p = Program c' 0 Running []
-					 where c' = dropAt p c
+readFunction arg c p 
+	| (loadLib arg) /= [] = let c' = dropAt p c in
+							Program ((loadLib arg)++c') 0 Running []
+	| otherwise           = let c' = dropAt p c in
+							Program c' 0 Running []

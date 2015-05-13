@@ -1,5 +1,4 @@
 module LibPico.Math where
-import Types
 
 libPicoMath :: [String]
 libPicoMath = [
@@ -11,5 +10,32 @@ libPicoMath = [
 			"-1",
 			"[END]~addloop",
 			"@<",
-			"/add"
+			"/add",
+			"%sub",
+			"[/0]~subloop",
+			"@<",
+			"-1",
+			"@>",
+			"-1",
+			"[END]~subloop",
+			"@<",
+			"/sub",
+			"%addFoward",
+			"[/0]~addFowardloop",
+			"-1",
+			"@>",
+			"+1",
+			"@<",
+			"[END]~addFowardloop",
+			"@>",
+			"/addFoward",
+			"%subFoward",
+			"[/0]~subFowardloop",
+			"-1",
+			"@>",
+			"-1",
+			"@<",
+			"[END]~subFowardloop",
+			"@>",
+			"/subFoward"
 			]

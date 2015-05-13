@@ -5,7 +5,7 @@ import Data.Char (chr, intToDigit)
 import Numeric (showHex, showIntAtBase)
 
 getTapeAfter :: String -> [Function] -> Tape -> Tape
-getTapeAfter arg f t = runProgramTape (Program ((function ((filter (\x -> (identifier x) == arg) f)!!0))++["HALT"]) 0 Running []) t
+getTapeAfter arg f t = runProgramTape (Program ((function ((filter (\x -> (identifier x) == arg) f)!!0))++["HALT"]) 0 Running f) t
 
 runProgramTape :: Program -> Tape -> Tape
 runProgramTape (Program c p Running f) (Tape b cur) = ( runProgramTape
@@ -15,7 +15,7 @@ runProgramTape (Program c p Running f) (Tape b cur) = ( runProgramTape
 runProgramTape (Program _ _ Halted _) t             = t
 
 getStringAfter :: String -> [Function] -> Tape -> String
-getStringAfter arg f t = runProgram (Program ((function ((filter (\x -> (identifier x) == arg) f)!!0))++["HALT"]) 0 Running []) t (-1)
+getStringAfter arg f t = runProgram (Program ((function ((filter (\x -> (identifier x) == arg) f)!!0))++["HALT"]) 0 Running f) t (-1)
 
 runProgram :: Program -> Tape -> Int -> String
 runProgram _ _ 0 = "\n\n-------------------------------------\nERROR! Maxium number of cycles used!\n| Suggestion: Increase maximum cycles\n"
