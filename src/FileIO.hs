@@ -23,5 +23,6 @@ loadFile path = do
     return Program {
     	code = removeSpaces (sanitise (lines (removeTabs rawData))),
     	pointer = 0,
-    	state = Running
+    	state = Running,
+    	functions = []
     }

@@ -2,6 +2,11 @@ module Types where
 
 data State = Running | Halted deriving (Show)
 
+data Function = Function {
+	identifier :: String,
+	function :: [String]
+} deriving (Show)
+
 data Cell = Cell {
 	value :: Int
 } | NoValue deriving (Show)
@@ -14,5 +19,6 @@ data Tape = Tape {
 data Program = Program {
 	code :: [String],
 	pointer :: Int,
-	state :: State
-}
+	state :: State,
+	functions :: [Function]
+} deriving (Show)

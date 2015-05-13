@@ -1,14 +1,10 @@
 # Sample Pico File
 
-+9
-[/0]~LOOP
-	@>
-	+10
-	@<
-	-1
-[END]~LOOP
+^libpico.math
+PICO
+=2
 @>
+=3
+$add
 !INT
-" equals "
-!ASCII
 HALT

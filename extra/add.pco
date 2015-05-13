@@ -1,0 +1,9 @@
+%add
+	[/0]~addloop
+		@<
+		+1
+		@>
+		-1
+	[END]~addloop
+	@<
+/add
