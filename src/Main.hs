@@ -10,5 +10,10 @@ tape = Tape {
 
 main = do
 	filePath <- getArgs
-	prg <- loadFile (filePath!!0)
-	putStrLn $ runProgram prg tape (-1)
+	if (filePath == [])
+		then do
+			prg <- interactive []
+			putStrLn $ runProgram (Program prg 0 Running []) tape (-1)
+		else do
+			prg <- loadFile (filePath!!0)
+			putStrLn $ runProgram prg tape (-1)

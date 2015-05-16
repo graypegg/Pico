@@ -1,4 +1,4 @@
-module Process (runProgram) where
+module Process (runProgram, interactive) where
 import Types
 import Helpers
 import Data.Char (chr, intToDigit)
@@ -20,18 +20,18 @@ getStringAfter arg f t = runProgram (Program ((function ((filter (\x -> (identif
 runProgram :: Program -> Tape -> Int -> String
 runProgram _ _ 0 = "\n\n-------------------------------------\nERROR! Maxium number of cycles used!\n| Suggestion: Increase maximum cycles\n"
 runProgram (Program c p Running f) (Tape b cur) (-1) = ( printIns (c!!p) (Program c p Running f) (Tape b cur) ) ++
-													( runProgram 
-															(programIns (c!!p) (Program c p Running f) (Tape b cur))
-															(tapeIns (c!!p) (Program c p Running f) (Tape b cur))
-															(-1)
-													)
-runProgram (Program c p Running f) (Tape b cur) i = ( printIns (c!!p) (Program c p Running f) (Tape b cur) ) ++
-													( runProgram 
-															(programIns (c!!p) (Program c p Running f) (Tape b cur))
-															(tapeIns (c!!p) (Program c p Running f) (Tape b cur))
-															(i-1)
-													)
-runProgram (Program _ _ Halted _) _ _ = ""
+													   ( runProgram 
+															   (programIns (c!!p) (Program c p Running f) (Tape b cur))
+															   (tapeIns (c!!p) (Program c p Running f) (Tape b cur))
+															   (-1)
+													   )
+runProgram (Program c p Running f) (Tape b cur) i    = ( printIns (c!!p) (Program c p Running f) (Tape b cur) ) ++
+													   ( runProgram 
+															   (programIns (c!!p) (Program c p Running f) (Tape b cur))
+															   (tapeIns (c!!p) (Program c p Running f) (Tape b cur))
+															   (i-1)
+													   )
+runProgram (Program _ _ Halted _) _ _ 				 = ""
 
 printIns :: String -> Program -> Tape -> String
 printIns ('!':arg) _ (Tape b cur)
@@ -63,4 +63,14 @@ tapeIns ('$':arg) (Program _ _ _ f) t = getTapeAfter arg f t
 tapeIns ('@':arg) _ (Tape b cur) 
 	| arg == ">" = Tape b (cur+1)
 	| arg == "<" = Tape b (cur-1)
+	| otherwise  = multipleMove arg b cur
 tapeIns _ _ t = t
+
+interactive :: [String] -> IO ([String])
+interactive prg = do
+	ins <- getLine
+	if (ins=="HALT")
+		then return $ reverse ("HALT":prg)
+		else do
+			prg <- interactive (ins:prg)
+			return prg

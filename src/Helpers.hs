@@ -5,6 +5,11 @@ import Data.List.Split (splitOn)
 import Data.List (elemIndex, isSuffixOf)
 import Data.Maybe (fromJust)
 
+isInteger :: String -> Bool
+isInteger s = case reads s :: [(Integer, String)] of
+	[(_, "")] -> True
+	_         -> False
+
 replaceNth :: Int -> a -> [a] -> [a]
 replaceNth n newVal (x:xs)
 	| n == 0    = newVal:xs
@@ -12,6 +17,14 @@ replaceNth n newVal (x:xs)
 
 takeGroup :: Int -> Int -> [a] -> [a]
 takeGroup start stop list = fst (splitAt ((stop+1)-start) (snd (splitAt start list)))
+
+multipleMove :: String -> [Cell] -> Int -> Tape
+multipleMove (dir:arg) b cur
+	| dir == '>' && (isInteger arg) = let i = read arg::Int in
+									  Tape b (cur+i)
+	| dir == '>' && (isInteger arg) = let i = read arg::Int in
+									  Tape b (cur-i)
+	| otherwise						= Tape b cur
 
 findEnd :: String -> [String] -> Int
 findEnd name c = (fromJust (elemIndex ('/':name) c))-1
