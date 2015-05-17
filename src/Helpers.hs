@@ -22,7 +22,7 @@ multipleMove :: String -> [Cell] -> Int -> Tape
 multipleMove (dir:arg) b cur
 	| dir == '>' && (isInteger arg) = let i = read arg::Int in
 									  Tape b (cur+i)
-	| dir == '>' && (isInteger arg) = let i = read arg::Int in
+	| dir == '<' && (isInteger arg) = let i = read arg::Int in
 									  Tape b (cur-i)
 	| otherwise						= TapeError $ "Unknown operator after \"@"++(dir:"\"\nReferring to: \""++arg++"\"")
 
