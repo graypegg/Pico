@@ -1,5 +1,6 @@
 module Process (runProgram, interactive) where
 import Types
+import LibPico
 import Helpers
 import Data.Char (chr, intToDigit)
 import Numeric (showHex, showIntAtBase)
@@ -46,7 +47,7 @@ printIns ('!':arg) _ (Tape b cur)
 printIns ('"':arg) _ _                 = init arg
 printIns ('$':arg) (Program _ _ _ f) t = if (functionLoaded f arg)
 											 then getStringAfter arg f t
-											 else error ("Unknown function\nReferring to: \""++arg++"\"")
+											 else error ("Unknown function\nReferring to: \""++arg++"\""++(functionCorrect arg))
 printIns _ _ _                         = ""
 
 programIns :: String -> Program -> Tape -> Program
@@ -71,7 +72,7 @@ tapeIns ('=':arg) _ (Tape b cur)      = if (isInteger arg)
 											else TapeError $ "Unknown operator after \"=\"\nReferring to: \""++arg++"\""
 tapeIns ('$':arg) (Program _ _ _ f) t = if (functionLoaded f arg)
 											then getTapeAfter arg f t
-											else TapeError $ "Unknown function\nReferring to: \""++arg++"\""
+											else TapeError $ "Unknown function\nReferring to: \""++arg++"\""++(functionCorrect arg)
 tapeIns ('@':arg) _ (Tape b cur) 
 	| arg == ">" = Tape b (cur+1)
 	| arg == "<" = Tape b (cur-1)

@@ -1,7 +1,7 @@
 module LibPico.Math where
 
-libPicoMath :: [String]
-libPicoMath = [
+libPicoMath :: ([String],[String],String)
+libPicoMath = ([
 			"%add",
 			"[/0]~addloop",
 			"@<",
@@ -38,4 +38,6 @@ libPicoMath = [
 			"[END]~subFowardloop",
 			"@>",
 			"/subFoward"
-			]
+			],
+			["add","sub","addFoward","subFoward"],
+			"libpico.math")

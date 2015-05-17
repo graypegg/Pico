@@ -1,7 +1,7 @@
 module LibPico.CellManagement where
 
-libPicoCellManagement :: [String]
-libPicoCellManagement = [
+libPicoCellManagement :: ([String],[String],String)
+libPicoCellManagement = ([
 						"%copy",
 						"[/0]~copyloop1",
 						"-1",
@@ -29,4 +29,6 @@ libPicoCellManagement = [
 						"$copy",
 						"$subFoward",
 						"/clear"
-						]
+						],
+						["copy","clear"],
+						"libpico.cellman")
