@@ -13,14 +13,11 @@ sndT (_,x,_) = x
 trdT :: ([String],[String],String) -> String
 trdT (_,_,x) = x
 
-loadLib :: String -> [String]
-loadLib x
-	| x == "libpico.math"    = fstT libPicoMath
-	| x == "libpico.cellman" = fstT libPicoCellManagement
-	| otherwise              = []
-
 libPicoAll :: [([String],[String],String)]
 libPicoAll = [libPicoMath, libPicoCellManagement]
+
+loadLib :: String -> [String]
+loadLib x = fstT $ (filter (\y -> (trdT y) == x) libPicoAll)!!0
 
 isSimilar :: String -> String -> Bool
 isSimilar arg what = 2 < (length $ filter (\x -> (length x) > 1) (group . concat $ zipWith (\a b -> a:b:[]) what arg))
