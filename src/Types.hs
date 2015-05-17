@@ -14,11 +14,11 @@ data Cell = Cell {
 data Tape = Tape {
 	bytes :: [Cell],
 	cursor :: Int
-} deriving (Show)
+} | TapeError String deriving (Show)
 
 data Program = Program {
 	code :: [String],
 	pointer :: Int,
 	state :: State,
 	functions :: [Function]
-} deriving (Show)
+} | ProgramError String deriving (Show)

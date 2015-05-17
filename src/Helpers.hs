@@ -24,7 +24,7 @@ multipleMove (dir:arg) b cur
 									  Tape b (cur+i)
 	| dir == '>' && (isInteger arg) = let i = read arg::Int in
 									  Tape b (cur-i)
-	| otherwise						= Tape b cur
+	| otherwise						= TapeError $ "Unknown operator after \"@"++(dir:"\"\nReferring to: \""++arg++"\"")
 
 findEnd :: String -> [String] -> Int
 findEnd name c = (fromJust (elemIndex ('/':name) c))-1
@@ -80,6 +80,9 @@ createFunction name c p f = Program {
 							}
 							where f' = (Function name (takeGroup (p+1) (findEnd name c) c)):f
 
+functionLoaded :: [Function] -> String -> Bool
+functionLoaded f name = elem name (map identifier f)
+
 dropAt :: Int -> [a] -> [a]
 dropAt n xs = let (ys,zs) = splitAt n xs in
 			  ys ++ (tail zs)
@@ -88,5 +91,4 @@ readFunction :: String -> [String] -> Int -> Program
 readFunction arg c p 
 	| (loadLib arg) /= [] = let c' = dropAt p c in
 							Program ((loadLib arg)++c') 0 Running []
-	| otherwise           = let c' = dropAt p c in
-							Program c' 0 Running []
+	| otherwise           = ProgramError $ "Unknown module\nReferring to: \""++arg++"\""

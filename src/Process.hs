@@ -18,7 +18,9 @@ getStringAfter :: String -> [Function] -> Tape -> String
 getStringAfter arg f t = runProgram (Program ((function ((filter (\x -> (identifier x) == arg) f)!!0))++["HALT"]) 0 Running f) t (-1)
 
 runProgram :: Program -> Tape -> Int -> String
-runProgram _ _ 0 = "\n\n-------------------------------------\nERROR! Maxium number of cycles used!\n| Suggestion: Increase maximum cycles\n"
+runProgram _ _ 0 = error "Maxium number of cycles used!\nSuggestion: Increase maximum cycles"
+runProgram _ (TapeError msg) _ = error msg
+runProgram (ProgramError msg) _ _ = error msg
 runProgram (Program c p Running f) (Tape b cur) (-1) = ( printIns (c!!p) (Program c p Running f) (Tape b cur) ) ++
 													   ( runProgram 
 															   (programIns (c!!p) (Program c p Running f) (Tape b cur))
@@ -42,7 +44,9 @@ printIns ('!':arg) _ (Tape b cur)
 	| arg == "NEWLINE"                 = "\n"
 	| otherwise                        = ""
 printIns ('"':arg) _ _                 = init arg
-printIns ('$':arg) (Program _ _ _ f) t = getStringAfter arg f t
+printIns ('$':arg) (Program _ _ _ f) t = if (functionLoaded f arg)
+											 then getStringAfter arg f t
+											 else error ("Unknown function\nReferring to: \""++arg++"\"")
 printIns _ _ _                         = ""
 
 programIns :: String -> Program -> Tape -> Program
@@ -53,13 +57,21 @@ programIns ('^':arg) (Program c p Running f) _ = readFunction arg c p
 programIns _ (Program c p Running f) _         = (Program c (p+1) Running f)
 
 tapeIns :: String -> Program -> Tape -> Tape
-tapeIns ('+':arg) _ (Tape b cur)      = Tape (replaceNth cur (newVal) b) cur
-								        where newVal = Cell $ (value (b!!cur)) + (read arg)
-tapeIns ('-':arg) _ (Tape b cur)      = Tape (replaceNth cur (newVal) b) cur
-								        where newVal = Cell $ (value (b!!cur)) - (read arg)
-tapeIns ('=':arg) _ (Tape b cur)      = Tape (replaceNth cur (newVal) b) cur
-								        where newVal = Cell $ read arg
-tapeIns ('$':arg) (Program _ _ _ f) t = getTapeAfter arg f t
+tapeIns ('+':arg) _ (Tape b cur)      = if (isInteger arg)
+											then do let newVal = Cell $ (value (b!!cur)) + (read arg) in
+													Tape (replaceNth cur (newVal) b) cur
+											else TapeError $ "Unknown operator after \"+\"\nReferring to: \""++arg++"\""
+tapeIns ('-':arg) _ (Tape b cur)      = if (isInteger arg)
+											then do let newVal = Cell $ (value (b!!cur)) - (read arg) in
+													Tape (replaceNth cur (newVal) b) cur
+											else TapeError $ "Unknown operator after \"-\"\nReferring to: \""++arg++"\""
+tapeIns ('=':arg) _ (Tape b cur)      = if (isInteger arg)
+											then do let newVal = Cell $ read arg in
+													Tape (replaceNth cur (newVal) b) cur
+											else TapeError $ "Unknown operator after \"=\"\nReferring to: \""++arg++"\""
+tapeIns ('$':arg) (Program _ _ _ f) t = if (functionLoaded f arg)
+											then getTapeAfter arg f t
+											else TapeError $ "Unknown function\nReferring to: \""++arg++"\""
 tapeIns ('@':arg) _ (Tape b cur) 
 	| arg == ">" = Tape b (cur+1)
 	| arg == "<" = Tape b (cur-1)
