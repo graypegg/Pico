@@ -17,7 +17,9 @@ libPicoAll :: [([String],[String],String)]
 libPicoAll = [libPicoMath, libPicoCellManagement]
 
 loadLib :: String -> [String]
-loadLib x = fstT $ (filter (\y -> (trdT y) == x) libPicoAll)!!0
+loadLib x = if ((length (filter (\y -> (trdT y) == x) libPicoAll)) == 1)
+				then fstT $ (filter (\y -> (trdT y) == x) libPicoAll)!!0
+				else []
 
 isSimilar :: String -> String -> Bool
 isSimilar arg what = 2 < (length $ filter (\x -> (length x) > 1) (group . concat $ zipWith (\a b -> a:b:[]) what arg))

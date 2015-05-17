@@ -43,7 +43,7 @@ printIns ('!':arg) _ (Tape b cur)
 	| arg == "BIN"                     = showIntAtBase 2 intToDigit (value (b!!cur)) ""
 	| arg == "ASCII"                   = [ (chr (value (b!!cur))) ]
 	| arg == "NEWLINE"                 = "\n"
-	| otherwise                        = ""
+	| otherwise                        = error $ "Unknown output type\nReferring to: \""++arg++"\""
 printIns ('"':arg) _ _                 = init arg
 printIns ('$':arg) (Program _ _ _ f) t = if (functionLoaded f arg)
 											 then getStringAfter arg f t
