@@ -2,6 +2,7 @@ module FileIO (loadFile, interactive) where
 import Types
 import Data.Text (unpack, pack, stripStart)
 import Data.Maybe (isNothing)
+import System.Directory (doesFileExist)
 import System.Console.Readline
 
 -- | Determines if instruction is a comment
@@ -26,14 +27,19 @@ removeSpaces []     = []
 -- | Loads a file into a Program interface
 loadFile :: String -> IO (Program)
 loadFile path = do
-    rawData <- readFile path
-    return Program {
-    	code = removeSpaces (sanitise (lines (removeTabs rawData))),
-    	pointer = 0,
-    	state = Running,
-    	functions = []
-    }
+	fileStat <- doesFileExist path
+	case fileStat of
+		True  -> do
+					rawData <- readFile path
+					return Program {
+						code = removeSpaces (sanitise (lines (removeTabs rawData))),
+						pointer = 0,
+						state = Running,
+						functions = []
+					}
+		False -> do return $ ProgramError ("File does not exist\nReferring to: \""++path++"\"")
 
+-- | Starts/manages interactive mode
 interactive :: [String] -> [String] -> IO ([String])
 interactive prg prompt = do
 	ins <- readline $ printPrompt prompt
@@ -54,6 +60,7 @@ interactive prg prompt = do
 							prg <- interactive (line:prg) prompt
 							return prg
 
+-- | Creates an interactive prompt
 printPrompt :: [String] -> String
 printPrompt (p:ps) = p ++ " " ++ (printPrompt ps)
 printPrompt []     = "- "

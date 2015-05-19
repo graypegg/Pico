@@ -2,7 +2,7 @@
 -- see http://haskell.org/cabal/users-guide/
 
 name:                Pico
-version:             0.1.0.0
+version:             0.1.1.1
 synopsis:            A very tiny programming language
 -- description:         
 license:             GPL-3
@@ -16,5 +16,5 @@ cabal-version:       >=1.8
 
 executable Pico
   main-is:             Main.hs
-  build-depends:       base ==4.6.*, split, text, MissingH, readline
+  build-depends:       base ==4.6.*, split, text, MissingH, readline, directory
   hs-source-dirs:      src

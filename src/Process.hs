@@ -4,13 +4,14 @@ import LibPico
 import Helpers
 import Data.Char (chr, intToDigit)
 import Numeric (showHex, showIntAtBase)
+import Errors
 
 -- Core Functions --
 
 runProgram :: Program -> Tape -> Int -> String
 runProgram _ _ 0 = error "Maxium number of cycles used!\nSuggestion: Increase maximum cycles"
-runProgram _ (TapeError msg) _ = error msg
-runProgram (ProgramError msg) _ _ = error msg
+runProgram _ (TapeError msg) _ = showError msg
+runProgram (ProgramError msg) _ _ = showError msg
 runProgram (Program c p Running f) (Tape b cur) (-1) = ( printIns (c!!p) (Program c p Running f) (Tape b cur) ) ++
 													   ( runProgram 
 															   (programIns (c!!p) (Program c p Running f) (Tape b cur))
