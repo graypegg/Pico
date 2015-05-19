@@ -5,18 +5,7 @@ import Helpers
 import Data.Char (chr, intToDigit)
 import Numeric (showHex, showIntAtBase)
 
-getTapeAfter :: String -> [Function] -> Tape -> Tape
-getTapeAfter arg f t = runProgramTape (Program ((function ((filter (\x -> (identifier x) == arg) f)!!0))++["HALT"]) 0 Running f) t
-
-runProgramTape :: Program -> Tape -> Tape
-runProgramTape (Program c p Running f) (Tape b cur) = ( runProgramTape
-															(programIns (c!!p) (Program c p Running f) (Tape b cur))
-															(tapeIns (c!!p) (Program c p Running f) (Tape b cur))
-													  )
-runProgramTape (Program _ _ Halted _) t             = t
-
-getStringAfter :: String -> [Function] -> Tape -> String
-getStringAfter arg f t = runProgram (Program ((function ((filter (\x -> (identifier x) == arg) f)!!0))++["HALT"]) 0 Running f) t (-1)
+-- Core Functions --
 
 runProgram :: Program -> Tape -> Int -> String
 runProgram _ _ 0 = error "Maxium number of cycles used!\nSuggestion: Increase maximum cycles"
@@ -35,6 +24,32 @@ runProgram (Program c p Running f) (Tape b cur) i    = ( printIns (c!!p) (Progra
 															   (i-1)
 													   )
 runProgram (Program _ _ Halted _) _ _ 				 = ""
+
+interactive :: [String] -> IO ([String])
+interactive prg = do
+	ins <- getLine
+	if (ins=="HALT")
+		then return $ reverse ("HALT":prg)
+		else do
+			prg <- interactive (ins:prg)
+			return prg
+
+-- Function Processing --
+
+getTapeAfter :: String -> [Function] -> Tape -> Tape
+getTapeAfter arg f t = runProgramTape (Program ((function ((filter (\x -> (identifier x) == arg) f)!!0))++["HALT"]) 0 Running f) t
+
+runProgramTape :: Program -> Tape -> Tape
+runProgramTape (Program c p Running f) (Tape b cur) = ( runProgramTape
+															(programIns (c!!p) (Program c p Running f) (Tape b cur))
+															(tapeIns (c!!p) (Program c p Running f) (Tape b cur))
+													  )
+runProgramTape (Program _ _ Halted _) t             = t
+
+getStringAfter :: String -> [Function] -> Tape -> String
+getStringAfter arg f t = runProgram (Program ((function ((filter (\x -> (identifier x) == arg) f)!!0))++["HALT"]) 0 Running f) t (-1)
+
+-- Instruction Processing --
 
 printIns :: String -> Program -> Tape -> String
 printIns ('!':arg) _ (Tape b cur)
@@ -78,12 +93,3 @@ tapeIns ('@':arg) _ (Tape b cur)
 	| arg == "<" = Tape b (cur-1)
 	| otherwise  = multipleMove arg b cur
 tapeIns _ _ t = t
-
-interactive :: [String] -> IO ([String])
-interactive prg = do
-	ins <- getLine
-	if (ins=="HALT")
-		then return $ reverse ("HALT":prg)
-		else do
-			prg <- interactive (ins:prg)
-			return prg
