@@ -1,6 +1,8 @@
-module FileIO (loadFile) where
+module FileIO (loadFile, interactive) where
 import Types
 import Data.Text (unpack, pack, stripStart)
+import Data.Maybe (isNothing)
+import System.Console.Readline
 
 -- | Determines if instruction is a comment
 isComment :: String -> Bool
@@ -31,3 +33,27 @@ loadFile path = do
     	state = Running,
     	functions = []
     }
+
+interactive :: [String] -> [String] -> IO ([String])
+interactive prg prompt = do
+	ins <- readline $ printPrompt prompt
+	case ins of
+		Nothing      -> do
+							putStrLn "\nQuitting Interactive Mode"
+							return ["HALT"]
+		Just ""		 -> do
+							prg <- interactive prg prompt
+							return prg
+		Just "HALT"  -> do return $ reverse ("HALT":prg)
+		Just ('^':p) -> do
+							addHistory ('^':p)
+							prg <- interactive (('^':p):prg) (p:prompt)
+							return prg
+		Just line	 -> do
+							addHistory line
+							prg <- interactive (line:prg) prompt
+							return prg
+
+printPrompt :: [String] -> String
+printPrompt (p:ps) = p ++ " " ++ (printPrompt ps)
+printPrompt []     = "- "

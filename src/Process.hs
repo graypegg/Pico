@@ -1,4 +1,4 @@
-module Process (runProgram, interactive) where
+module Process (runProgram) where
 import Types
 import LibPico
 import Helpers
@@ -24,15 +24,6 @@ runProgram (Program c p Running f) (Tape b cur) i    = ( printIns (c!!p) (Progra
 															   (i-1)
 													   )
 runProgram (Program _ _ Halted _) _ _ 				 = ""
-
-interactive :: [String] -> IO ([String])
-interactive prg = do
-	ins <- getLine
-	if (ins=="HALT")
-		then return $ reverse ("HALT":prg)
-		else do
-			prg <- interactive (ins:prg)
-			return prg
 
 -- Function Processing --
 
