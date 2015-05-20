@@ -1,0 +1,18 @@
+^libpico.math
+=50
+"("
+!INT
+"*"
+@>
+=35
+!INT
+")"
+$mul
+" + "
+@>
+=93455
+!INT
+" = "
+$add
+!INT
+HALT

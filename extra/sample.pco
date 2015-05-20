@@ -1,10 +1,13 @@
 # Sample Pico File
 
-^libpico.math
-PICO
-=2
++6
+[/0]~main
+	@>
+	+10
+	@<
+	-1
+[END]~main
 @>
-=3
-$add
-!INT
++5
+!ASCII
 HALT

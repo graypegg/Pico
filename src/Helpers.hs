@@ -26,7 +26,9 @@ multipleMove (dir:arg) b cur
 									  Tape b (cur+i)
 	| dir == '<' && (isInteger arg) = let i = read arg::Int in
 									  Tape b (cur-i)
-	| otherwise						= TapeError $ "Unknown operator after \"@"++(dir:"\"\nReferring to: \""++arg++"\"")
+	| ( dir == '<' || dir == '>' )
+	  && (not (isInteger arg)) 		= TapeError $ "Unknown operator after \"@"++(dir:"\"\nReferring to: \""++arg++"\"")
+	| otherwise						= TapeError $ "Unknown operator after \"@\"\nReferring to: \""++(dir:"\"")
 
 -- Function Importing/Creation --
 
