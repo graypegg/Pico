@@ -9,7 +9,7 @@ import Errors
 -- Core Functions --
 
 runProgram :: Program -> Tape -> Int -> String
-runProgram _ _ 0 = error "Maxium number of cycles used!\nSuggestion: Increase maximum cycles"
+runProgram _ _ 0 = showError "Maxium number of cycles used!\nSuggestion: Increase maximum cycles"
 runProgram _ (TapeError msg) _ = showError msg
 runProgram (ProgramError msg) _ _ = showError msg
 runProgram (Program c p Running f) (Tape b cur) (-1) = ( printIns (c!!p) (Program c p Running f) (Tape b cur) ) ++
@@ -50,11 +50,11 @@ printIns ('!':arg) _ (Tape b cur)
 	| arg == "BIN"                     = showIntAtBase 2 intToDigit (value (b!!cur)) ""
 	| arg == "ASCII"                   = [ (chr (value (b!!cur))) ]
 	| arg == "NEWLINE"                 = "\n"
-	| otherwise                        = error $ "Unknown output type\nReferring to: \""++arg++"\""
+	| otherwise                        = showError $ "Unknown output type\nReferring to: \""++arg++"\""
 printIns ('"':arg) _ _                 = init arg
 printIns ('$':arg) (Program _ _ _ f) t = if (functionLoaded f arg)
 											 then getStringAfter arg f t
-											 else error ("Unknown function\nReferring to: \""++arg++"\""++(functionCorrect arg))
+											 else ""
 printIns _ _ _                         = ""
 
 programIns :: String -> Program -> Tape -> Program
