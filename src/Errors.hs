@@ -1,4 +1,4 @@
-module Errors where
+module Errors (showError) where
 import Types
 
 -- | Shows a nice looking error message
