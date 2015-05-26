@@ -4,6 +4,7 @@ import LibPico
 import Helpers
 import Data.Char (chr, intToDigit)
 import Numeric (showHex, showIntAtBase)
+import Data.List.Utils (startswith)
 import Errors
 
 -- Core Functions --
@@ -50,6 +51,7 @@ printIns ('!':arg) _ (Tape b cur)
 	| arg == "BIN"                     = showIntAtBase 2 intToDigit (value (b!!cur)) ""
 	| arg == "ASCII"                   = [ (chr (value (b!!cur))) ]
 	| arg == "NEWLINE"                 = "\n"
+	| startswith "TAPE" arg            = showTape b arg
 	| otherwise                        = showError $ "Unknown output type\nReferring to: \""++arg++"\""
 printIns ('"':arg) _ _                 = init arg
 printIns ('$':arg) (Program _ _ _ f) t = if (functionLoaded f arg)

@@ -4,6 +4,8 @@ import LibPico
 import Data.List.Split (splitOn)
 import Data.List (elemIndex, isSuffixOf)
 import Data.Maybe (fromJust)
+import Control.Exception (catch)
+import Errors
 
 -- General Functions --
 
@@ -29,6 +31,16 @@ multipleMove (dir:arg) b cur
 	| ( dir == '<' || dir == '>' )
 	  && (not (isInteger arg)) 		= TapeError $ "Unknown operator after \"@"++(dir:"\"\nReferring to: \""++arg++"\"")
 	| otherwise						= TapeError $ "Unknown operator after \"@\"\nReferring to: \""++(dir:"\"")
+
+-- | Outputs a string repersentation of the tape
+showTape :: [Cell] -> String -> String
+showTape b arg = clipShowTape start stop $ concat $ map (\x -> (show (value x))++"|") (takeGroup start stop b)
+				 where start = read ((splitOn "-" ((splitOn "TAPE" arg)!!1))!!0) :: Int
+				       stop = read ((splitOn "-" ((splitOn "TAPE" arg)!!1))!!1) :: Int
+
+clipShowTape :: Int -> Int -> String -> String
+clipShowTape start _ []     = showError $ "Unknown starting point after !TAPE\nReferring to: \""++(show start)++"\""
+clipShowTape start stop str = (show start)++">  "++(init str)++"  <"++(show stop)
 
 -- Function Importing/Creation --
 
