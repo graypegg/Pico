@@ -34,10 +34,13 @@ multipleMove (dir:arg) b cur
 
 -- | Outputs a string repersentation of the tape
 showTape :: [Cell] -> String -> String
-showTape b arg = clipShowTape start stop $ concat $ map (\x -> (show (value x))++"|") (takeGroup start stop b)
-				 where start = read ((splitOn "-" ((splitOn "TAPE" arg)!!1))!!0) :: Int
-				       stop = read ((splitOn "-" ((splitOn "TAPE" arg)!!1))!!1) :: Int
+showTape b arg = if ((isInteger start) && (isInteger stop))
+					then clipShowTape ((read start):: Int) ((read stop):: Int) $ concat $ map (\x -> (show (value x))++"|") (takeGroup ((read start):: Int) ((read stop):: Int) b)
+					else showError $ "Unknown start and end points\nReferring to: \""++(start)++"\" and \""++(stop)++"\""
+				 where start = (splitOn "-" ((splitOn "TAPE" arg)!!1))!!0
+				       stop = (splitOn "-" ((splitOn "TAPE" arg)!!1))!!1
 
+-- | Throws error or formats tape by clipping off the end
 clipShowTape :: Int -> Int -> String -> String
 clipShowTape start _ []     = showError $ "Unknown starting point after !TAPE\nReferring to: \""++(show start)++"\""
 clipShowTape start stop str = (show start)++">  "++(init str)++"  <"++(show stop)
