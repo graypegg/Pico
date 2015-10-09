@@ -40,7 +40,7 @@ multipleMove (dir:arg) b cur
 -- | Outputs a string repersentation of the tape
 showTape :: [Cell] -> String -> Int -> String
 showTape b arg cur = if ((isInteger start) && (isInteger stop))
-                        then ((printTapeHead b cur start) ++ "\n" ++ (clipShowTape ((read start):: Int) ((read stop):: Int) $ concat $ map (\x -> (show (value x))++"|") (takeGroup ((read start):: Int) ((read stop):: Int) b))) ++ "\n"
+                        then ((printTapeHead b cur start stop) ++ "\n" ++ (clipShowTape ((read start):: Int) ((read stop):: Int) $ concat $ map (\x -> (show (value x))++"|") (takeGroup ((read start):: Int) ((read stop):: Int) b))) ++ "\n"
                         else showError $ "Unknown start and end points\nReferring to: \""++(start)++"\" and \""++(stop)++"\""
                      where start = (splitOn "-" ((splitOn "TAPE" arg)!!1))!!0
                            stop = (splitOn "-" ((splitOn "TAPE" arg)!!1))!!1
@@ -51,8 +51,12 @@ clipShowTape start _ []     = showError $ "Unknown starting point after !TAPE\nR
 clipShowTape start stop str = (show start)++">  "++(init str)++"  <"++(show stop)
 
 -- | Calculates amount of spaces needed to align the tape head with the right cell
-printTapeHead :: [Cell] -> Int -> String -> String
-printTapeHead b cur start = ( take ((length start)+3) (repeat ' ') ) ++ (concat (map (\x -> (take x (repeat ' '))++" " ) (getTapeCellLength b ((read start)::Int) cur []))) ++ "V"
+printTapeHead :: [Cell] -> Int -> String -> String -> String
+printTapeHead b cur start stop = if (cur >= ((read start)::Int) && cur <= ((read stop)::Int))
+                                    then ( take ((length start)+3) (repeat ' ') ) ++ (concat (map (\x -> (take x (repeat ' '))++" " ) (getTapeCellLength b ((read start)::Int) cur []))) ++ "V"
+                                    else if (cur < ((read start)::Int))
+                                            then ( take ((length start)+3) (repeat ' ') ) ++ ("<")
+                                            else ( take ((length start)+3) (repeat ' ') ) ++ (concat (map (\x -> (take x (repeat ' '))++" " ) (getTapeCellLength b ((read start)::Int) ((read stop)::Int) []))) ++ (">")
 
 -- | Gets a list of lengths of the values of the cells between two values
 getTapeCellLength :: [Cell] -> Int -> Int -> [Int] -> [Int]
