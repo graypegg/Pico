@@ -20,7 +20,17 @@ main = do
 				then putStrLn $ launchText
 				else putStr ""
 			prg <- interactive [] []
-			putStrLn $ runProgram (Program prg 0 Running []) tape (-1)
+			cfgCyclesBool <- getConfigValue "interpreter.cycle_limit"
+			if ((fromJust cfgCyclesBool) == False)
+				then putStrLn $ runProgram (Program prg 0 Running []) tape (-1)
+				else do 
+					    cfgCyclesMax <- getConfigValue "interpreter.max_cycles"
+					    putStrLn $ runProgram (Program prg 0 Running []) tape (fromJust cfgCyclesMax)
 		else do
 			prg <- loadFile (filePath!!0)
-			putStrLn $ runProgram prg tape (-1)
+			cfgCyclesBool <- getConfigValue "interpreter.cycle_limit"
+			if ((fromJust cfgCyclesBool) == False)
+				then putStrLn $ runProgram prg tape (-1)
+				else do 
+					    cfgCyclesMax <- getConfigValue "interpreter.max_cycles"
+					    putStrLn $ runProgram prg tape (fromJust cfgCyclesMax)
