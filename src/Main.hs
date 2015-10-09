@@ -1,8 +1,9 @@
 import Types
 import Process
 import FileIO
-import Paths_Pico (version)
-import Data.Version (showVersion)
+import Helpers (getConfigValue)
+import Data.Maybe (fromJust)
+import Data.LaunchText
 import System.Environment (getArgs)
 
 tape = Tape {
@@ -14,7 +15,10 @@ main = do
 	filePath <- getArgs
 	if (filePath == [])
 		then do
-			putStrLn $ "Pico version "++ (showVersion version) ++"\nInteractive Mode, Run program with HALT command"
+   			cfgLaunchText <- getConfigValue "interactive.launch_text"
+   			if (fromJust cfgLaunchText)
+				then putStrLn $ launchText
+				else putStr ""
 			prg <- interactive [] []
 			putStrLn $ runProgram (Program prg 0 Running []) tape (-1)
 		else do
