@@ -1,5 +1,5 @@
 import Types
-import Process
+import Process (runProgram)
 import FileIO
 import Helpers (getConfigValue)
 import Data.Maybe (fromJust)

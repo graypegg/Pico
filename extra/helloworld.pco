@@ -1,7 +1,5 @@
 # Hello World Script
 
-^libpico.cellman
-
 +8
 [/0]~Loop1
 	@>
@@ -58,8 +56,4 @@
 @>2
 +1
 !ASCII
-@>
-+2
-!ASCII
-
 HALT

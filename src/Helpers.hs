@@ -40,7 +40,7 @@ multipleMove (dir:arg) b cur
 -- | Outputs a string repersentation of the tape
 showTape :: [Cell] -> String -> Int -> String
 showTape b arg cur = if ((isInteger start) && (isInteger stop))
-                        then ((printTapeHead b cur start stop) ++ "\n" ++ (clipShowTape ((read start):: Int) ((read stop):: Int) $ concat $ map (\x -> (show (value x))++"|") (takeGroup ((read start):: Int) ((read stop):: Int) b))) ++ "\n"
+                        then "\n" ++ ((printTapeHead b cur start stop) ++ "\n" ++ (clipShowTape ((read start):: Int) ((read stop):: Int) $ concat $ map (\x -> (show (value x))++"|") (takeGroup ((read start):: Int) ((read stop):: Int) b))) ++ "\n"
                         else showError $ "Unknown start and end points\nReferring to: \""++(start)++"\" and \""++(stop)++"\""
                      where start = (splitOn "-" ((splitOn "TAPE" arg)!!1))!!0
                            stop = (splitOn "-" ((splitOn "TAPE" arg)!!1))!!1
