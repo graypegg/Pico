@@ -1,0 +1,15 @@
+# Input Stack Test
+
+"Enter 2 letters: "
+?2
+
+@>
+=?
+@<
+=?
+
+"Your letters backwards are: "
+!ASCII
+@>
+!ASCII
+HALT

@@ -67,20 +67,21 @@ getTapeCellLength b now top acc
 -- Function Importing/Creation --
 
 -- | Imports a function into a program
-createFunction :: String -> [String] -> Int -> [Function] -> Program
-createFunction name c p f = Program {
+createFunction :: String -> [String] -> Int -> [Int] -> [Function] -> Program
+createFunction name c p is f = Program {
                                 code = c,
                                 pointer = (findEnd name c)+2,
+                                inputStack = is,
                                 state = Running,
                                 functions = f'
                             }
                             where f' = (Function name (takeGroup (p+1) (findEnd name c) c)):f
 
 -- | Read a function into memory
-readFunction :: String -> [String] -> Int -> Program
-readFunction arg c p 
+readFunction :: String -> [String] -> Int -> [Int] -> Program
+readFunction arg c p is
     | (loadLib arg) /= [] = let c' = dropAt p c in
-                            Program ((loadLib arg)++c') 0 Running []
+                            Program ((loadLib arg)++c') 0 is Running []
     | otherwise           = ProgramError $ "Unknown module\nReferring to: \""++arg++"\""
 
 -- | Determine if a function is loaded/imported
@@ -116,43 +117,43 @@ findStart label c = fromJust $ elemIndex ([ x | x <- c, (isSuffixOf label x) ]!!
 
 -- | Jump program pointer to top of loop
 jumpToTop :: String -> Program -> Program
-jumpToTop label (Program c p Running f) = Program c ((findStart label c)) Running f
+jumpToTop label (Program c p is Running f) = Program c ((findStart label c)) is Running f
 
 -- | Jump program pointer to bottom of loop
 jumpToEnd :: String -> Program -> Program
-jumpToEnd label (Program c p Running f) = Program c ((fromJust (elemIndex ("[END]~"++label) c))+1) Running f
+jumpToEnd label (Program c p is Running f) = Program c ((fromJust (elemIndex ("[END]~"++label) c))+1) is Running f
 
 -- | Sets the condition mode for a loop
-compareBrackets :: String -> [String] -> Int -> Tape -> [Function] -> Program
-compareBrackets ('E':arg) c p t f = jumpToTop (getLabel arg) (Program c p Running f)
-compareBrackets ('/':arg) c p t f = ifNotEq arg c p t f
-compareBrackets ('=':arg) c p t f = ifEq arg c p t f
-compareBrackets ('>':arg) c p t f = ifGT arg c p t f
-compareBrackets ('<':arg) c p t f = ifLT arg c p t f
+compareBrackets :: String -> [String] -> Int -> [Int] -> Tape -> [Function] -> Program
+compareBrackets ('E':arg) c p is t f = jumpToTop (getLabel arg) (Program c p is Running f)
+compareBrackets ('/':arg) c p is t f = ifNotEq arg c p is t f
+compareBrackets ('=':arg) c p is t f = ifEq arg c p is t f
+compareBrackets ('>':arg) c p is t f = ifGT arg c p is t f
+compareBrackets ('<':arg) c p is t f = ifLT arg c p is t f
 
 -- | Sets loop into !EQ mode
-ifNotEq :: String -> [String] -> Int -> Tape -> [Function] -> Program
-ifNotEq rest c p (Tape b cur) f
-    | (number rest) /= (value (b!!cur)) = (Program c (p+1) Running f)
-    | otherwise                         = jumpToEnd (getLabel rest) (Program c p Running f)
+ifNotEq :: String -> [String] -> Int -> [Int] -> Tape -> [Function] -> Program
+ifNotEq rest c p is (Tape b cur) f
+    | (number rest) /= (value (b!!cur)) = (Program c (p+1) is Running f)
+    | otherwise                         = jumpToEnd (getLabel rest) (Program c p is Running f)
 
 -- | Sets loop into EQ mode
-ifEq :: String -> [String] -> Int -> Tape -> [Function] -> Program
-ifEq rest c p (Tape b cur) f
-    | (number rest) == (value (b!!cur)) = (Program c (p+1) Running f)
-    | otherwise                         = jumpToEnd (getLabel rest) (Program c p Running f)
+ifEq :: String -> [String] -> Int -> [Int] -> Tape -> [Function] -> Program
+ifEq rest c p is (Tape b cur) f
+    | (number rest) == (value (b!!cur)) = (Program c (p+1) is Running f)
+    | otherwise                         = jumpToEnd (getLabel rest) (Program c p is Running f)
 
 -- | Sets loop into GT mode
-ifGT :: String -> [String] -> Int -> Tape -> [Function] -> Program
-ifGT rest c p (Tape b cur) f
-    | (number rest) < (value (b!!cur)) = (Program c (p+1) Running f)
-    | otherwise                        = jumpToEnd (getLabel rest) (Program c p Running f)
+ifGT :: String -> [String] -> Int -> [Int] -> Tape -> [Function] -> Program
+ifGT rest c p is (Tape b cur) f
+    | (number rest) < (value (b!!cur)) = (Program c (p+1) is Running f)
+    | otherwise                        = jumpToEnd (getLabel rest) (Program c p is Running f)
 
 -- | Sets loop into LT mode
-ifLT :: String -> [String] -> Int -> Tape -> [Function] -> Program
-ifLT rest c p (Tape b cur) f
-    | (number rest) > (value (b!!cur)) = (Program c (p+1) Running f)
-    | otherwise                        = jumpToEnd (getLabel rest) (Program c p Running f)
+ifLT :: String -> [String] -> Int -> [Int] -> Tape -> [Function] -> Program
+ifLT rest c p is (Tape b cur) f
+    | (number rest) > (value (b!!cur)) = (Program c (p+1) is Running f)
+    | otherwise                        = jumpToEnd (getLabel rest) (Program c p is Running f)
 
 -- | Gets the config files value for a certain item, does not have a type declaration due to Haskell weirdness.
 getConfigValue item = do home <- getHomeDirectory

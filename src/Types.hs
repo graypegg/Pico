@@ -19,6 +19,7 @@ data Tape = Tape {
 data Program = Program {
 	code :: [String],
 	pointer :: Int,
+	inputStack :: [Int],
 	state :: State,
 	functions :: [Function]
 } | ProgramError String deriving (Show)

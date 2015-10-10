@@ -22,10 +22,10 @@ main = do
 			prg <- interactive [] []
 			cfgCyclesBool <- getConfigValue "interpreter.cycle_limit"
 			if ((fromJust cfgCyclesBool) == False)
-				then putStrLn $ runProgram (Program prg 0 Running []) tape (-1)
+				then putStrLn $ runProgram (Program prg 0 [] Running []) tape (-1)
 				else do 
 					    cfgCyclesMax <- getConfigValue "interpreter.max_cycles"
-					    putStrLn $ runProgram (Program prg 0 Running []) tape (fromJust cfgCyclesMax)
+					    putStrLn $ runProgram (Program prg 0 [] Running []) tape (fromJust cfgCyclesMax)
 		else do
 			prg <- loadFile (filePath!!0)
 			cfgCyclesBool <- getConfigValue "interpreter.cycle_limit"
